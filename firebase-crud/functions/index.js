@@ -15,13 +15,24 @@ app.use(bodyParser.json());
  * Calculate hours worked between check-in and check-out times.
  * @param {number} checkInTime - The timestamp of check-in.
  * @param {number} checkOutTime - The timestamp of check-out.
- * @return {number} - The calculated hours worked.
+ * @return {string} - The calculated hours and minutes worked in the format "HH:mm".
  */
 function calculateHoursWorked(checkInTime, checkOutTime) {
   const checkIn = new Date(checkInTime);
   const checkOut = new Date(checkOutTime);
-  const hoursWorked = (checkOut - checkIn) / 3600000;
-  return hoursWorked;
+
+  // Calculate the difference in milliseconds
+  const timeDifference = checkOut - checkIn;
+
+  // Calculate hours and minutes
+  const hours = Math.floor(timeDifference / 3600000);
+  const minutes = Math.floor((timeDifference % 3600000) / 60000);
+
+  // Format the result as "HH:mm"
+  const formattedHours = hours < 10 ? `0${hours}` : `${hours}`;
+  const formattedMinutes = minutes < 10 ? `0${minutes}` : `${minutes}`;
+
+  return `${formattedHours}:${formattedMinutes}`;
 }
 
 // Clock In endpoint
@@ -29,12 +40,24 @@ app.post("/clockIn", async (req, res) => {
   try {
     const userCheckInRef = db.collection("checkIn").doc();
     const userCheckInId = userCheckInRef.id;
+    const date = new Date();
+    const dateTimeHours = () => {
+      let hours = date.getHours() + "";
+      let minutes = date.getMinutes() + "";
+      if(minutes.length < 2) {
+        minutes = "0" + minutes;
+      } else if (hours.length < 2) {
+        hours = "0" + hours;
+      }
+      return hours + ":" + minutes;
+    };
 
     await userCheckInRef.set({
       id: userCheckInId,
       employeeName: req.body.employeeName,
       employeeToken: req.body.employeeToken,
       checkInDateTime: Date.now(),
+      checkInDateTimeHours: dateTimeHours()
     });
 
     return res.status(200).send({status: "Success",
@@ -50,41 +73,53 @@ app.post("/clockOut", async (req, res) => {
   try {
     const userCheckOutRef = db.collection("checkOut").doc();
     const userCheckOutId = userCheckOutRef.id;
-
+    const date = new Date();
+    const dateTimeHours = () => {
+      let hours = date.getHours() + "";
+      let minutes = date.getMinutes() + "";
+      if(minutes.length < 2) {
+        minutes = "0" + minutes;
+      } else if (hours.length < 2) {
+        hours = "0" + hours;
+      }
+      return hours + ":" + minutes;
+    };
     await userCheckOutRef.set({
       id: userCheckOutId,
       employeeName: req.body.employeeName,
       employeeToken: req.body.employeeToken,
       checkOutDateTime: Date.now(),
+      checkInDateTimeHours: dateTimeHours()
     });
 
-    // Calculate daily hours worked
-    const checkInSnap = await db.collection("checkIn")
-        .where("employeeName", "==", req.body.employeeName)
-        .orderBy("checkInDateTime", "desc")
-        .limit(1)
-        .get();
+      // Calculate daily hours worked
+      const checkInSnap = await db.collection("checkIn")
+      .where("employeeName", "==", req.body.employeeName)
+      .orderBy("checkInDateTime", "desc")
+      .limit(1)
+      .get();
 
-    if (!checkInSnap.empty) {
-      const checkInTime = checkInSnap.docs[0].data().checkInDateTime;
-      const checkOutTime = Date.now();
-      const hoursWorked = calculateHoursWorked(checkInTime, checkOutTime);
+  if (!checkInSnap.empty) {
+    const checkInTime = checkInSnap.docs[0].data().checkInDateTime;
+    const checkOutTime = Date.now();
+    const hoursWorked = calculateHoursWorked(checkInTime, checkOutTime);
 
-      // Store the calculated hours in the "timeWorked" collection
-      await db.collection("timeWorked").add({
-        date: new Date(checkOutTime).toDateString(),
-        employeeName: req.body.employeeName,
-        hoursWorked: hoursWorked,
-      });
-    }
-
-    return res.status(200).send({status: "Success",
-      msg: "Clock Out Data Saved"});
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({status: "Failed", msg: error});
+    // Store the calculated hours in the "timeWorked" collection
+    await db.collection("timeWorked").add({
+      date: new Date(checkOutTime).toDateString(),
+      employeeName: req.body.employeeName,
+      hoursWorked: hoursWorked,
+    });
   }
+
+  return res.status(200).send({status: "Success",
+    msg: "Clock Out Data Saved"});
+} catch (error) {
+  console.log(error);
+  res.status(500).send({status: "Failed", msg: error});
+}
 });
+
 app.get("/calculateTime/:employeeName", async (req, res) => {
     try {
       const employeeName = req.params.employeeName;
