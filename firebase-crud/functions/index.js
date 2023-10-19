@@ -121,75 +121,104 @@ app.post("/clockOut", async (req, res) => {
 });
 
 app.get("/calculateTime/:employeeName", async (req, res) => {
-    try {
-      const employeeName = req.params.employeeName;
-  
-      // Query timeWorked collection for the specified employee
-      const timeWorkedEntries = await db.collection("timeWorked")
-        .where("employeeName", "==", employeeName)
-        .get();
-  
-      // Calculate total hours and minutes worked
-      let totalHours = 0;
-      let totalMinutes = 0;
-  
-      timeWorkedEntries.forEach((entry) => {
-        const hoursWorked = entry.data().hoursWorked;
-        totalHours += Math.floor(hoursWorked);
-        totalMinutes += (hoursWorked % 1) * 60; // Convert decimal part to minutes
-      });
-  
-      // Adjust total minutes to hours if necessary
-      totalHours += Math.floor(totalMinutes / 60);
-      totalMinutes %= 60;
-    // Round totalMinutes to two decimal places
-      totalMinutes = totalMinutes.toFixed(2);
-      return res.status(200).json({
-        status: "Success",
-        msg: "Time calculated successfully",
-        totalHours: totalHours,
-        totalMinutes: totalMinutes,
-      });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ status: "Failed", msg: error });
-    }
-  });
-  
+  try {
+    const employeeName = req.params.employeeName;
+
+    // Query timeWorked collection for the specified employee
+    const timeWorkedEntries = await db.collection("timeWorked")
+      .where("employeeName", "==", employeeName)
+      .get();
+
+    // Calculate total hours and minutes worked
+    let totalHours = 0;
+    let totalMinutes = 0;
+
+    timeWorkedEntries.forEach((entry) => {
+      const hoursWorked = entry.data().hoursWorked;
+      const [hours, minutes] = hoursWorked.split(':');
+      totalHours += parseInt(hours, 10);
+      totalMinutes += parseInt(minutes, 10);
+    });
+
+    // Adjust total minutes to hours if necessary
+    totalHours += Math.floor(totalMinutes / 60);
+    totalMinutes %= 60;
+
+    // Round totalMinutes to the nearest whole number
+    totalMinutes = Math.round(totalMinutes);
+
+    return res.status(200).json({
+      status: "Success",
+      msg: "Time calculated successfully",
+      totalHours: totalHours,
+      totalMinutes: totalMinutes,
+    });
+  } catch (error) {
+    console.error("Error calculating time:", error);
+    return res.status(500).json({ status: "Failed", msg: "Error calculating time" });
+  }
+});
+
 exports.calculateWeeklyTimeWorked = functions.https.onRequest(async (req, res) => {
-    try {
+  try {
+    // Fetch all employee names from the checkIn or checkOut collection, adjust accordingly
+    const checkInSnapshot = await db.collection('checkIn').get();
+    const checkOutSnapshot = await db.collection('checkOut').get();
+
+    const checkInEmployees = checkInSnapshot.docs.map(doc => doc.data().employeeName);
+    const checkOutEmployees = checkOutSnapshot.docs.map(doc => doc.data().employeeName);
+
+    // Combine the employee names from both collections to get a unique list
+    const allEmployees = [...new Set([...checkInEmployees, ...checkOutEmployees])];
+
+    for (const employeeName of allEmployees) {
       const today = new Date();
       const lastWeek = new Date(today);
       lastWeek.setDate(today.getDate() - 7);
-  
-      // Query timeWorked collection for the last week's entries
+
+      // Query timeWorked collection for the last week's entries for the current employee
       const weeklyEntries = await db.collection('timeWorked')
+        .where('employeeName', '==', employeeName)
         .where('date', '>=', lastWeek.toDateString())
         .where('date', '<=', today.toDateString())
         .get();
-  
-      // Calculate total hours worked for the week
-      let totalHoursWorked = 0;
+
+      // Calculate total hours worked for the week for the current employee
+      let totalMinutesWorked = 0;
+
       weeklyEntries.forEach(entry => {
-        totalHoursWorked += entry.data().hoursWorked;
+        const hoursWorked = entry.data().hoursWorked;
+        const [hours, minutes] = hoursWorked.split(':');
+        totalMinutesWorked += parseFloat(hours) * 60 + parseFloat(minutes);
       });
-  
-      // Store the result in a new Firestore collection (weeklyTimeWorked)
+
+      // Calculate total hours and remaining minutes for the current employee
+      const totalHours = Math.floor(totalMinutesWorked / 60);
+      const remainingMinutes = totalMinutesWorked % 60;
+
+      // Format the result as "HH:mm" for the current employee
+      const formattedHours = totalHours < 10 ? `0${totalHours}` : `${totalHours}`;
+      const formattedMinutes = remainingMinutes < 10 ? `0${remainingMinutes}` : `${remainingMinutes}`;
+      const formattedTotalHoursWorked = `${formattedHours}:${formattedMinutes}`;
+
+      // Store the result in a new Firestore collection (weeklyTimeWorked) for the current employee
       await db.collection('weeklyTimeWorked').add({
+        employeeName: employeeName,
         startDate: lastWeek.toDateString(),
         endDate: today.toDateString(),
-        totalHoursWorked: totalHoursWorked,
+        totalHoursWorked: formattedTotalHoursWorked,
       });
-  
-      return res.status(200).send({ status: 'Success', msg: 'Weekly time worked calculated and stored' });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).send({ status: 'Failed', msg: error });
     }
-  });
+
+    return res.status(200).send({ status: 'Success', msg: 'Weekly time worked calculated and stored for all employees' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send({ status: 'Failed', msg: error });
+  }
+});
 
 
-  exports.calculateMonthlyTimeWorked = functions.https.onRequest(async (req, res) => {
+exports.calculateMonthlyTimeWorked = functions.https.onRequest(async (req, res) => {
     try {
       const today = new Date();
       const lastMonth = new Date(today);
@@ -203,15 +232,18 @@ exports.calculateWeeklyTimeWorked = functions.https.onRequest(async (req, res) =
   
       // Calculate total hours worked for the month
       let totalHoursWorked = 0;
+  
       monthlyEntries.forEach(entry => {
-        totalHoursWorked += entry.data().hoursWorked;
+        const hoursWorked = entry.data().hoursWorked;
+        const [hours, minutes] = hoursWorked.split(':');
+        totalHoursWorked += parseFloat(hours) + parseFloat(minutes) / 60;
       });
   
       // Store the result in a new Firestore collection (monthlyTimeWorked)
       await db.collection('monthlyTimeWorked').add({
         startDate: lastMonth.toDateString(),
         endDate: today.toDateString(),
-        totalHoursWorked: totalHoursWorked,
+        totalHoursWorked: totalHoursWorked.toFixed(2),
       });
   
       return res.status(200).send({ status: 'Success', msg: 'Monthly time worked calculated and stored' });
@@ -219,6 +251,5 @@ exports.calculateWeeklyTimeWorked = functions.https.onRequest(async (req, res) =
       console.error(error);
       return res.status(500).send({ status: 'Failed', msg: error });
     }
-  });
-
+  });  
 exports.api = functions.https.onRequest(app);
