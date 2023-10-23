@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Time Tracker</title>
+</head>
+<body>
+    <h1>Time Tracker</h1>
+    <!-- Firebase Configuration Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-functions.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-messaging.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-remote-config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.5.0/firebase-performance.js"></script>
+
+    <!-- Firebase Configuration -->
+    <!-- Clock In Form -->
+    <h2>Clock In</h2>
+    <form action="" id="clockInForm" onsubmit="clockIn()">
+      <input type="text" id="clockInEmployeeName" placeholder="Employee Name">
+      <input type="text" id="clockInEmployeeToken" placeholder="Employee Token">
+      <button onclick="submit" id="clock-in-button">Clock In</button>
+    </form>
+
+    <!-- Clock Out Form -->
+    <h2>Clock Out</h2>
+    <input type="text" id="clockOutEmployeeName" placeholder="Employee Name">
+    <input type="text" id="clockOutEmployeeToken" placeholder="Employee Token">
+    <button onclick="clockOut()">Clock Out</button>
+
+    <!-- Calculate Time Worked Form -->
+    <h2>Calculate Time Worked</h2>
+    <input type="text" id="calculateTimeEmployeeName" placeholder="Employee Name">
+    <button onclick="calculateTime()">Calculate Time</button>
+
+    <!-- Display Results -->
+    <div id="result"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

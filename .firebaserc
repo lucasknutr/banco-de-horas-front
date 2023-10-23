@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "tem-que-funcionar",
+    "staging": "tem-que-funcionar"
+  },
+  "targets": {},
+  "etags": {}
+}

@@ -1,16 +1,19 @@
 const express = require("express");
 const admin = require("firebase-admin");
-const serviceAccount = require("../key.json"); // Download from Firebase Console
+const serviceAccount = require("./key.json"); // Download from Firebase Console
 const functions = require("firebase-functions");
 const bodyParser = require("body-parser");
-
+const cors = require('cors')({ origin: true });
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
 const db = admin.firestore();
 const app = express();
+
 app.use(bodyParser.json());
+app.use(cors);
+
 /**
  * Calculate hours worked between check-in and check-out times.
  * @param {number} checkInTime - The timestamp of check-in.
@@ -216,7 +219,6 @@ exports.calculateWeeklyTimeWorked = functions.https.onRequest(async (req, res) =
     return res.status(500).send({ status: 'Failed', msg: error });
   }
 });
-
 
 exports.calculateMonthlyTimeWorked = functions.https.onRequest(async (req, res) => {
     try {
