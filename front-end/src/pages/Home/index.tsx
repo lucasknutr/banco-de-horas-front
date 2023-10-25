@@ -10,8 +10,6 @@ import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 const Home = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [employeeName, setEmployeeName] = useState("");
-    const [employeeToken, setEmployeeToken] = useState("");
 
     const [
         signInWithEmailAndPassword,
@@ -31,7 +29,7 @@ const Home = () => {
       }
 
     if (user) {
-        return (
+        return (    
             <Link to="/checkin"> <div className="text-3xl flex justify-center items-center p-10 bg-blue-400 w-[50%] mx-auto font-bold mt-36 rounded-xl"> Realizar Check-In </div></Link>
         )
     }
