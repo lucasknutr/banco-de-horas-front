@@ -40,7 +40,7 @@ function clockIn() {
       document.getElementById("result").innerHTML = data.msg;
   })
   .catch((error) => {
-      console.error("Clock In Error:", error);
+      console.error("Clock In Error: ", error);
   });
 }
 
@@ -65,7 +65,7 @@ function clockOut() {
       document.getElementById("result").innerHTML = data.msg;
   })
   .catch((error) => {
-      console.error("Clock Out Error:", error);
+      console.error("Clock Out Error: ", error);
   });
 }
 
@@ -82,7 +82,7 @@ function calculateTime() {
       document.getElementById("result").innerHTML = `Total Time Worked: ${totalHours} hours and ${totalMinutes} minutes`;
   })
   .catch((error) => {
-      console.error("Calculate Time Error:", error);
+      console.error("Calculate Time Error: ", error);
   });
 }
 
