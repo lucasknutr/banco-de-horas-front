@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ParticlesBg from 'particles-bg'
 import Logo from '../../components/Logo';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from "../../services/firebaseConfig";
@@ -10,6 +10,7 @@ import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 const Home = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const [
         signInWithEmailAndPassword,
@@ -29,13 +30,14 @@ const Home = () => {
       }
 
     if (user) {
-        return (    
-            <Link to="/checkin"> <div className="text-3xl flex justify-center items-center p-10 bg-blue-400 w-[50%] mx-auto font-bold mt-36 rounded-xl"> Realizar Check-In </div></Link>
-        )
+        return navigate("/checkin");
+        
     }
 
     if (error) {
-        return alert("Informações não são válidas. Tente novamente ou registre-se.");
+        alert("Informações não são válidas. Tente novamente ou registre-se.");
+        console.log(error);
+        window.location.reload();
     }
     
 
@@ -48,11 +50,11 @@ const Home = () => {
                 
                 <div className="text-center">
                     <p className='mb-2 font-bold text-sm mr-[50%]'>Email:</p>
-                    <input type="text" className='w-[60%] rounded-sm text-slate-800' onChange={e => setEmail(e.target.value)} placeholder='Digite seu nome'/>
+                    <input type="email" className='w-[60%] rounded-sm text-slate-800' onChange={e => setEmail(e.target.value)} placeholder='Digite seu nome'/>
                 </div>
                 <div className="text-center">
                     <p className='mb-2 font-bold text-sm mr-[50%]'>Senha:</p>
-                    <input type="text" className='w-[60%] rounded-sm text-slate-800' onChange={e => setPassword(e.target.value)} placeholder='Digite seu token'/>
+                    <input type="password" className='w-[60%] rounded-sm text-slate-800' onChange={e => setPassword(e.target.value)} placeholder='Digite seu token'/>
                 </div>
                     <button className='px-8 py-1 rounded-xl bg-pink-400 text-white mb-7 shadow-xl font-bold hover:bg-white
                     hover:text-black hover:scale-105 transition-all duration-150' onClick={(e) => handleClick(e)}>Entrar</button>

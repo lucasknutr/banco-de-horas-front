@@ -1,49 +1,38 @@
-import React, { useEffect, useState } from 'react'
-import Logo from '../../components/Logo';
+import { useState } from 'react'
+import QrCodeReader from '../../components/QrCodeReader';
+import Switch from '@mui/material/Switch';
 
 const CheckIn = () => {
-    const [employeeName, setEmployeeName] = useState("");
-    const [employeeToken, setEmployeeToken] = useState("");
-    const [result, setResult] = useState("");
-
-    const handleSubmit = () => {
-        fetch("https://us-central1-tem-que-funcionar.cloudfunctions.net/clockIn", {
-            method: "post",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                data: {
-                    employeeName: employeeName,
-                    employeeToken: employeeToken
-                }
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data.message);
-            setEmployeeName("");
-            setEmployeeToken("");
-        })
-    }
+    const [employeeName, setEmployeeName] = useState<string>("");
+    const [employeeToken, setEmployeeToken] = useState<string>("");
+    const [checkingOption, setCheckingOption] = useState<string>("checkIn");
+    const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
 
   return (
     <>
 
-            <div className="w-[100svw] h-[100svh] flex flex-col justify-center items-center">
-                <p className="">
-                    EmployeeName:
-                    <input type="text" onChange={e => setEmployeeName(e.target.value)} />
-                </p>
-                <p className="">
-                    EmployeeToken:
-                    <input type="text" onChange={e => setEmployeeToken(e.target.value)} />
-                </p>
-                <button onClick={() => handleSubmit()}>Submit</button>
-                <p>
-                    {result}
-                </p>
+            <div className="w-[100svw] h-[100svh] flex justify-center items-center text-slate-200">
+                <div className="w-[15%] h-[53%] flex flex-col justify-center gap-3 px-7 shadow-2xl rounded-xl" style={{background: 'rgba(0, 0, 0, 0.8)', border: '1px'}}>
+                    <p className='flex justify-between'>
+                        Entrada <Switch {...label} defaultChecked />     
+                    </p>              
+                    <p className='flex justify-between'>
+                        Saída <Switch {...label} />     
+                    </p>
+                    <p className='text-center font-extrabold'>
+                                Verificação (horas):              
+                    </p>
+                    <p className='flex justify-between'>
+                        Diário <Switch {...label} />     
+                    </p>              
+                    <p className='flex justify-between'>
+                        Mensal <Switch {...label} />     
+                    </p>              
+                </div>      
+                <div className='rounded-xl shadow-2xl'>
+                    <QrCodeReader checkingOption={checkingOption} />
+                </div>
             </div>
  
     </>
