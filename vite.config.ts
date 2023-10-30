@@ -11,6 +11,7 @@ const envReplace = replace({
 });
 
 export default defineConfig({
+  // base: '/banco-de-horas-front/',
   plugins: [
     react(),
     reactRefresh(),

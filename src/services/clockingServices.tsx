@@ -22,7 +22,7 @@ function getDailyTimeById(id: any) {
 };
 
 function getNameByEmail(data: any) {
-    return api.get("/getNameByEmail", data);
+    return api.post("/getNameByEmail", data);
 }
 
 const clockingServices = {
