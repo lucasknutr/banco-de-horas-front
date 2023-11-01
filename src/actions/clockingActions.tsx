@@ -11,7 +11,7 @@ export async function postClockOut(id: any) {
     return response;
 }
 
-export async function getMonthlyTimeById(id: string) {
+export async function getMonthlyTimeById(id: any) {
     const response = await clockingServices.getMonthlyTimeById(id);
     return response;
 }

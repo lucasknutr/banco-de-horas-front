@@ -1,10 +1,10 @@
 import { useZxing } from "react-zxing";
 import { useEffect, useMemo, useState } from 'react';
-import { postClockIn } from '../../actions/clockingActions';
-import { employeePost } from "../../interfaces/employeeInterfaces";
+import { getMonthlyTimeById, postClockIn, postClockOut } from '../../actions/clockingActions';
+import { calculateTimePost, employeePost } from "../../interfaces/employeeInterfaces";
 import { Alert } from "@mui/material";
 
-const QrCodeReader = ({ checkingOption, handleOpen, setEmployeeName, employeeName, email, setEmail }: { checkingOption: string, handleOpen: any, setEmployeeName: any, employeeName: any, email: string, setEmail: any }) => {
+const QrCodeReader = ({ handleOpen, setEmployeeName, employeeName, email, setEmail, isDailyOn, isMonthlyOn, isEntradaOn, isSaidaOn }: { handleOpen: any, setEmployeeName: any, employeeName: any, email: string, setEmail: any, isDailyOn: boolean, isMonthlyOn: boolean, isEntradaOn: boolean, isSaidaOn: boolean }) => {
   const [result, setResult] = useState<any>({
     data: {
       employeeName: "",
@@ -23,9 +23,15 @@ const QrCodeReader = ({ checkingOption, handleOpen, setEmployeeName, employeeNam
 
         };
 
+      const employeeCalculateTime: calculateTimePost = {
+        data: {
+          employeeName: employeeName,
+        }
+      };
+
     async function handleClockIn(employee: employeePost) {
       try {
-        if (result.data.employeeToken && result.data.employeeToken !== lastScannedQRCode) {
+        if (result.data.employeeName && result.data.email !== lastScannedQRCode) {
           const response = await postClockIn(employee);
           console.log(response);
           setLastScannedQRCode(result.data.email);
@@ -38,10 +44,52 @@ const QrCodeReader = ({ checkingOption, handleOpen, setEmployeeName, employeeNam
         handleOpen();
       }
     }
+
+    async function handleClockOut(employee: employeePost) {
+      try {
+        if (result.data.employeeName && result.data.email !== lastScannedQRCode) {
+          const response = await postClockOut(employee);
+          console.log(response);
+          setLastScannedQRCode(result.data.email);
+          setEmployeeName(result.data.employeeName);
+        }
+      } catch (error) {
+        alert(error);
+      } finally {
+        // TODO Adicionar modal
+        handleOpen();
+      }
+    }
+
+    async function handleMonthlyHours(employee: calculateTimePost) {
+      try {
+        if (result.data.employeeName) {
+          const response = await getMonthlyTimeById(employee);
+          console.log(response);
+          setLastScannedQRCode(result.data.email);
+          setEmployeeName(result.data.employeeName);
+        }
+      } catch (error) {
+        alert(error);
+      } finally {
+        // TODO Adicionar modal
+        handleOpen();
+      }
+    }
   
-    if (result.data.email && result.data.email !== lastScannedQRCode) {
+    if (result.data.email && result.data.email !== lastScannedQRCode && isEntradaOn) {
       handleClockIn(employee);
     }
+
+    else if (result.data.email && result.data.email !== lastScannedQRCode && isSaidaOn) {
+      handleClockOut(employee);
+    }
+
+    else if (result.data.name && isMonthlyOn) {
+      handleMonthlyHours(employeeCalculateTime);
+    }
+
+
   }, [result, lastScannedQRCode]);
 
   const { ref } = useZxing({

@@ -21,6 +21,7 @@ function App() {
     <>
       <ParticlesBg type="lines" bg={true} />
       <Routes>
+        
         <Route path="/" element={
           <Home />
         } />

@@ -5,6 +5,12 @@ export interface employee {
     },
 };
 
+export interface calculateTimePost {
+    data: {
+        employeeName: string,
+    }
+}
+
 export interface employeePost extends employee {
     // TODO: add timing information
 };
