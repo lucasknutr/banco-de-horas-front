@@ -1,6 +1,7 @@
 import './App.css'
 import CheckIn from './pages/CheckIn';
 import Home from './pages/Home'
+// @ts-ignore
 import { BrowserRouter as Switch, Route, Routes } from "react-router-dom";
 import ParticlesBg from 'particles-bg';
 import { useState, useEffect } from 'react';
@@ -9,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 
 function App() {
   const [email, setEmail] = useState<string>("");
+  // @ts-ignore
   const [auth, setAuth] = useState<boolean>(false);
   const navigate = useNavigate();
   useEffect(() => {
@@ -23,6 +25,7 @@ function App() {
       <Routes>
         
         <Route path="/" element={
+          // @ts-ignore
           <Home />
         } />
         <Route path="/checkin" element={

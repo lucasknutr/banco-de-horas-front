@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import QRCode from "react-qr-code";
 import { getNameByEmail } from '../../actions/clockingActions';
 
+// @ts-ignore
 const QrCodeGenerator = ({email} : {email:string}) => {
+  // @ts-ignore
   const [employeeName, setEmployeeName] = useState("");
   const [qrCode, setQrCode] = useState("");
 

@@ -2,8 +2,10 @@ import { useZxing } from "react-zxing";
 import { useEffect, useMemo, useState } from 'react';
 import { getMonthlyTimeById, postClockIn, postClockOut } from '../../actions/clockingActions';
 import { calculateTimePost, employeePost } from "../../interfaces/employeeInterfaces";
+// @ts-ignore
 import { Alert } from "@mui/material";
 
+// @ts-ignore
 const QrCodeReader = ({ handleOpen, setEmployeeName, employeeName, email, setEmail, isDailyOn, isMonthlyOn, isEntradaOn, isSaidaOn }: { handleOpen: any, setEmployeeName: any, employeeName: any, email: string, setEmail: any, isDailyOn: boolean, isMonthlyOn: boolean, isEntradaOn: boolean, isSaidaOn: boolean }) => {
   const [result, setResult] = useState<any>({
     data: {

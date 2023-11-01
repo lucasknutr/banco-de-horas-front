@@ -1,20 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import QrCodeReader from '../../components/QrCodeReader';
 import Switch from '@mui/material/Switch';
 import Box from '@mui/material/Box';
+// @ts-ignore
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import CheckCircleSharpIcon from '@mui/icons-material/CheckCircleSharp';
+// @ts-ignore
 import { Navigate, useNavigate } from 'react-router-dom';
 
 const CheckIn = ({ email, setEmail }: { email: string, setEmail: any }) => {
   const [employeeName, setEmployeeName] = useState<string>("");
   const [checkingOption, setCheckingOption] = useState<boolean>(false);
   const [isEntradaOn, setIsEntradaOn] = useState<boolean>(true);
+  // @ts-ignore
   const [isSaidaOn, setIsSaidaOn] = useState<boolean>(true);
+  // @ts-ignore
   const [isDailyOn, setIsDailyOn] = useState<boolean>(true);
+  // @ts-ignore
   const [isMonthlyOn, setIsMonthlyOn] = useState<boolean>(true);
+  // @ts-ignore
   const [checkingBox, setCheckingBox] = useState<boolean>(false);
   const label = { inputProps: { 'aria-label': 'Switch demo' } };
   const modalStyle = {

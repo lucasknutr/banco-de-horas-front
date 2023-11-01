@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Tilt } from 'react-tilt'
 import logo from '../../assets/logo.png'
 import './style.css'
