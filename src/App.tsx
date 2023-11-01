@@ -24,7 +24,7 @@ function App() {
       <ParticlesBg type="lines" bg={true} />
       <Routes>
         
-        <Route path="/banco-de-horas-front" element={
+        <Route path="/banco-de-horas-front/" element={
           // @ts-ignore
           <Home />
         } />
