@@ -90,7 +90,7 @@ const CheckIn = ({ email, setEmail }: { email: string, setEmail: any }) => {
             }}/> Apenas verificação
         </p>
         <button className='p-2 border-2 rounded-md hover:bg-pink-400 hover:scale-105 transition-all duration-200'
-          onClick={() => navigate("/qrcode")}>Gerar QR Code</button>
+          onClick={() => navigate("/banco-de-horas-front/qrcode")}>Gerar QR Code</button>
       </div>
         <div className='rounded-xl shadow-2xl'>
           <QrCodeReader handleOpen={handleOpen} setEmployeeName={setEmployeeName} employeeName={employeeName} email={email} setEmail={setEmail} isMonthlyOn={isMonthlyOn} isDailyOn={isDailyOn} isEntradaOn={isEntradaOn} isSaidaOn={isSaidaOn} />

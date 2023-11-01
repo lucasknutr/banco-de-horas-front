@@ -16,7 +16,7 @@ function App() {
   useEffect(() => {
     if (localStorage.getItem('email')) {
       setAuth(true);
-      navigate("/checkin");
+      navigate("/banco-de-horas-front/checkin");
     }
   }, []);
   return (
@@ -24,14 +24,14 @@ function App() {
       <ParticlesBg type="lines" bg={true} />
       <Routes>
         
-        <Route path="/" element={
+        <Route path="/banco-de-horas-front" element={
           // @ts-ignore
           <Home />
         } />
-        <Route path="/checkin" element={
+        <Route path="/banco-de-horas-front/checkin" element={
           <CheckIn email={email} setEmail={setEmail} />
         } /> 
-        <Route path="/qrcode" element={
+        <Route path="/banco-de-horas-front/qrcode" element={
           <QrCodeGenerator email={email} />
         } />
 

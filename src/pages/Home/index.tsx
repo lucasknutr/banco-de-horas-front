@@ -36,7 +36,7 @@ const Home = () => {
     if (user) {
         // Store the email in localStorage when the user signs in
         localStorage.setItem('email', user.user?.email!);
-        return navigate("/checkin");
+        return navigate("/banco-de-horas-front/checkin");
     }
 
     if (error) {
