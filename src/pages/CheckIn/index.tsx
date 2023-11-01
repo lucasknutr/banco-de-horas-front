@@ -35,8 +35,11 @@ const CheckIn = ({ email, setEmail }: { email: string, setEmail: any }) => {
     p: 4,
   };
   const [open, setOpen] = useState(false);
+  const [openSaida, setOpenSaida] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const handleOpenSaida = () => setOpenSaida(true);
+  const handleCloseSaida = () => setOpenSaida(false);
   const navigate = useNavigate();
 
   const handleSwitchChange = () => {
@@ -93,7 +96,7 @@ const CheckIn = ({ email, setEmail }: { email: string, setEmail: any }) => {
           onClick={() => navigate("/banco-de-horas-front/qrcode")}>Gerar QR Code</button>
       </div>
         <div className='rounded-xl shadow-2xl'>
-          <QrCodeReader handleOpen={handleOpen} setEmployeeName={setEmployeeName} employeeName={employeeName} email={email} setEmail={setEmail} isMonthlyOn={isMonthlyOn} isDailyOn={isDailyOn} isEntradaOn={isEntradaOn} isSaidaOn={isSaidaOn} />
+          <QrCodeReader handleOpen={handleOpen} handleOpenSaida={handleOpenSaida} setEmployeeName={setEmployeeName} employeeName={employeeName} email={email} setEmail={setEmail} isMonthlyOn={isMonthlyOn} isDailyOn={isDailyOn} isEntradaOn={isEntradaOn} isSaidaOn={isSaidaOn} />
         </div>
         <div>
           <Modal
@@ -109,6 +112,22 @@ const CheckIn = ({ email, setEmail }: { email: string, setEmail: any }) => {
               </Typography>
               <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                 Seja bem-vinda(o), {employeeName}!
+              </Typography>
+            </Box>
+          </Modal>
+          <Modal
+            open={openSaida}
+            onClose={handleCloseSaida}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={modalStyle}>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                <CheckCircleSharpIcon />
+                Saída realizada com sucesso!
+              </Typography>
+              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                Bom descanso, {employeeName}!
               </Typography>
             </Box>
           </Modal>

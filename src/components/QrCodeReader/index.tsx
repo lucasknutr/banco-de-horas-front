@@ -6,7 +6,7 @@ import { calculateTimePost, employeePost } from "../../interfaces/employeeInterf
 import { Alert } from "@mui/material";
 
 // @ts-ignore
-const QrCodeReader = ({ handleOpen, setEmployeeName, employeeName, email, setEmail, isDailyOn, isMonthlyOn, isEntradaOn, isSaidaOn }: { handleOpen: any, setEmployeeName: any, employeeName: any, email: string, setEmail: any, isDailyOn: boolean, isMonthlyOn: boolean, isEntradaOn: boolean, isSaidaOn: boolean }) => {
+const QrCodeReader = ({ handleOpen, handleOpenSaida, setEmployeeName, employeeName, email, setEmail, isDailyOn, isMonthlyOn, isEntradaOn, isSaidaOn }: { handleOpen: any, handleOpenSaida: any, setEmployeeName: any, employeeName: any, email: string, setEmail: any, isDailyOn: boolean, isMonthlyOn: boolean, isEntradaOn: boolean, isSaidaOn: boolean }) => {
   const [result, setResult] = useState<any>({
     data: {
       employeeName: "",
@@ -59,7 +59,7 @@ const QrCodeReader = ({ handleOpen, setEmployeeName, employeeName, email, setEma
         alert(error);
       } finally {
         // TODO Adicionar modal
-        handleOpen();
+        handleOpenSaida();
       }
     }
 
